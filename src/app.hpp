@@ -1,0 +1,43 @@
+#pragma once
+#include <SDL2/SDL.h>
+#include <iostream>
+#include <glad/glad.h>
+#include <vector>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include "image.hpp"
+
+
+class app{
+
+    public:
+        app();
+        void Draw();
+        void PreDraw();
+        void InitializeProgram();
+        void MainLoop();
+        void Run();
+        void CleanUp();
+        void Input();
+        GLuint CompileShader(GLuint type, const GLchar* source);
+        GLchar* LoadShaderSource(const char *filename);
+        GLuint CreateShaderProgram(const char* vertexshadersource, const char* fragementshadersource);
+        void CreateGraphicsPipeline();
+        void VertexSpecification();
+
+    private:
+        int gScreenWidth = 1080;
+        int gScreenHeight = 720;
+        SDL_Window* gGraphicsApplicationWindow = nullptr;
+        SDL_GLContext gOpenGlContext = nullptr;
+
+        bool gQuit = false;
+
+        GLuint gVertexArrayObject = 0;
+        GLuint gVertexBufferObject = 0;
+        GLuint gGraphicsPipelineShaderProgram = 0;
+        //image myImage;
+
+        int input = 0;
+
+};
