@@ -6,6 +6,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "image.hpp"
+#include "player.hpp"
+#include "scene.hpp"
+#include "mat.hpp"
 
 
 class app{
@@ -38,6 +41,7 @@ class app{
         GLuint gGraphicsPipelineShaderProgram = 0;
         //image myImage;
 
+        Scene myScene;
         int input = 0;
 
 };

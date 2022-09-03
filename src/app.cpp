@@ -45,12 +45,13 @@ void app::InitializeProgram()
 void app::PreDraw(){
     float time = SDL_GetTicks() / 1000.0f;
     glUniform1f(glGetUniformLocation(gGraphicsPipelineShaderProgram, "time"), time);
-    std::cout << "time: " << time << std::endl;
 
-    auto transformMatrix = glm::mat4(cos(time), -sin(time), 0.0f, input * time * 0.1f,
-                                     sin(time), cos(time), 0.0f, input * time * 0.1f,
-                                     0.0f, 0.0f, 1.0f, input * time * 0.1f,
-                                     0.0f, 0.0f, 0.0f, 1.0f);
+    int ydirection = myScene.myPlayer.Keys[0] - myScene.myPlayer.Keys[1];
+    int xdirection = myScene.myPlayer.Keys[2] - myScene.myPlayer.Keys[3];
+
+    // auto transformMatrix = mat::translationMatrix(myScene.myPlayer.x * 0.1f, myScene.myPlayer.y * 0.1f, myScene.myPlayer.z * 0.1f);
+
+    auto transformMatrix = mat::rotationMatrix(time * 0.1f, - time * 1.0f, - time * 1.0f);
 
     auto transLoc = glGetUniformLocation(gGraphicsPipelineShaderProgram, "transform");
     glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(transformMatrix));
@@ -70,11 +71,11 @@ void app::PreDraw(){
 void app::Draw(){
     glBindVertexArray(gVertexArrayObject);
     glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawArrays(GL_TRIANGLES, 0, 18);
 }
 
-
-void app::Input(){
+void app::Input()
+{
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
@@ -90,19 +91,61 @@ void app::Input(){
             case SDLK_ESCAPE:
                 gQuit = true;
                 break;
-            
-            case SDLK_w:
+
+            case SDLK_z:
                 std::cout << "W pressed" << std::endl;
-                input = 1;
+                myScene.myPlayer.Keys[0] = 0;
+                continue;
+
+            case SDLK_s:
+                std::cout << "S pressed" << std::endl;
+                myScene.myPlayer.Keys[1] = 0;
+                continue;
+
+            case SDLK_q:
+                std::cout << "A pressed" << std::endl;
+                myScene.myPlayer.Keys[2] = 0;
+                continue;
+
+            case SDLK_d:
+                std::cout << "D pressed" << std::endl;
+                myScene.myPlayer.Keys[3] = 0;
+                continue;
+            default:
                 break;
             }
 
+        case SDL_KEYDOWN:
+            switch (event.key.keysym.sym)
+            {
+            case SDLK_z:
+                std::cout << "W pressed" << std::endl;
+                myScene.myPlayer.Keys[0] = 1;
+                continue;
+
+            case SDLK_s:
+                std::cout << "S pressed" << std::endl;
+                myScene.myPlayer.Keys[1] = 1;
+                continue;
+
+            case SDLK_q:
+                std::cout << "A pressed" << std::endl;
+                myScene.myPlayer.Keys[2] = 1;
+                continue;
+
+            case SDLK_d:
+                std::cout << "D pressed" << std::endl;
+                myScene.myPlayer.Keys[3] = 1;
+                continue;
+
+            default:
+                break;
+            }
         default:
             break;
         }
     }
 }
-
 
 void app::MainLoop()
 {
@@ -118,6 +161,8 @@ void app::MainLoop()
 
         // Update the screen
         SDL_GL_SwapWindow(gGraphicsApplicationWindow);
+
+        myScene.Update();
     }
 }
 
@@ -128,6 +173,7 @@ void app::CleanUp()
     SDL_GL_DeleteContext(gOpenGlContext);
     SDL_Quit();
 }
+
 
 GLuint app::CompileShader(GLuint type, const GLchar* source){
     GLuint shaderObject;
@@ -143,6 +189,7 @@ GLuint app::CompileShader(GLuint type, const GLchar* source){
     glCompileShader(shaderObject);
     return shaderObject;
 }
+
 
 GLchar* app::LoadShaderSource(const char *filename){
     FILE* fp = fopen(filename, "rb");
@@ -182,6 +229,10 @@ void app::CreateGraphicsPipeline(){
     gGraphicsPipelineShaderProgram = CreateShaderProgram(vs, fs);
 }
 
+//  1 |  -1 0 1
+//  0 |  -1 0 1
+// -1 |  -1 0 1
+
 
 void app::VertexSpecification(){
     std::cout << "Vertex Specification" << std::endl;
@@ -199,6 +250,33 @@ void app::VertexSpecification(){
                                             1.0f, 0.0f, 0.0f, // color 6
                                             -0.5f, 0.5f, 0.0f, // vertex 6
                                             0.0f, 0.0f, 1.0f, // color 7
+
+                                            -0.5f, -0.5f, 0.5f, // vertex 7
+                                            1.0f, 0.0f, 0.0f, // color 8
+                                            0.5f, -0.5f, 0.5f, // vertex 8
+                                            0.0f, 1.0f, 0.0f, // color 9
+                                            -0.5f, 0.5f, 0.5f, // vertex 9
+                                            0.0f, 0.0f, 1.0f, // color 10
+
+                                            0.5f, -0.5f, 0.5f, // vertex 10
+                                            0.0f, 1.0f, 0.0f, // color 11
+                                            0.5f, 0.5f, 0.5f, // vertex 12
+                                            1.0f, 0.0f, 0.0f, // color 13
+                                            -0.5f, 0.5f, 0.5f, // vertex 14
+                                            0.0f, 0.0f, 1.0f, // color 15
+
+                                            -0.5f, -0.5f, 0.0f, // vertex 16
+                                            1.0f, 0.0f, 0.0f, // color 17
+                                            0.5f, -0.5f, 0.0f, // vertex 18
+                                            0.0f, 1.0f, 0.0f, // color 19
+                                            -0.5f, -0.5f, 0.5f, // vertex 20
+                                            0.0f, 0.0f, 1.0f, // color 21
+
+                                            0.5f, -0.5f, 0.0f, // vertex 22
+                                            0.0f, 1.0f, 0.0f, // color 23
+                                            0.5f, -0.5f, 0.5f, // vertex 24
+                                            1.0f, 0.0f, 0.0f, // color 25
+                                            -0.5f, -0.5f, 0.5f, // vertex 26
                                             };
 
     
