@@ -3,9 +3,9 @@
 
 Player::Player()
 {
-    x = 0;
-    y = 0;
-    z = 0;
+    x = 0.0f;
+    y = 0.0f;
+    z = 2.0f;
     Keys[0] = 0;
     Keys[1] = 0;
     Keys[2] = 0;
@@ -33,11 +33,29 @@ void Player::Move()
     float y_increment = (Keys[0] - Keys[1]) * speed;
 
     x += x_increment;
-    y += y_increment;
+    z += y_increment;
 }
 
 
 void Player::View()
 {
     //std::cout << "X: " << x << " Y: " << y << std::endl;
+}
+
+
+float Player::getTheta()
+{
+    return theta;
+}
+
+
+float Player::getPhi()
+{
+    return phi;
+}
+
+
+float Player::getAlpha()
+{
+    return alpha;
 }

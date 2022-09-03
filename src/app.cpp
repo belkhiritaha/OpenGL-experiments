@@ -8,36 +8,37 @@ app::app(){
 void app::InitializeProgram()
 {
     srand(time(NULL));
-    std::cout << "Initializing program" << std::endl;
     fflush(stdout);
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
-        std::cout << "SDL could not initialize!" << std::endl;
         exit(1);
     }
 
-    std::cout << "SDL initialized" << std::endl;
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 
-    gGraphicsApplicationWindow = SDL_CreateWindow("SDL2 OpenGL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+    // gGraphicsApplicationWindow = SDL_CreateWindow("SDL2 OpenGL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, gScreenWidth, gScreenHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+    // create full screen window
+    gGraphicsApplicationWindow = SDL_CreateWindow("SDL2 OpenGL", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 0, 0, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP);
+
+    // get window size
+    SDL_GetWindowSize(gGraphicsApplicationWindow, &gScreenWidth, &gScreenHeight);
+
+    // get aspect ratio
+    gAspectRatio = (float)gScreenWidth / (float)gScreenHeight;
+
     if(gGraphicsApplicationWindow==nullptr){
-        std::cout << "Window could not be created!" << std::endl;
         exit(1);
     }
-    std::cout << "Window created" << std::endl;
 
     gOpenGlContext = SDL_GL_CreateContext(gGraphicsApplicationWindow);
     if(gOpenGlContext==nullptr){
-        std::cout << "OpenGL context could not be created!" << std::endl;
         exit(1);
     }
-    std::cout << "OpenGL context created" << std::endl;
 
     if(!gladLoadGLLoader(SDL_GL_GetProcAddress)){
-        std::cout << "Failed to initialize OpenGL context" << std::endl;
         exit(1);
     }
 }
@@ -52,10 +53,18 @@ void app::PreDraw(){
 
     // auto transformMatrix = mat::translationMatrix(myScene.myPlayer.x * 0.1f, myScene.myPlayer.y * 0.1f, myScene.myPlayer.z * 0.1f);
 
-    auto transformMatrix = mat::viewMatrix(myScene.myPlayer.x * 0.1f, myScene.myPlayer.y * 0.1f, myScene.myPlayer.z * 0.1f, 0.2f, 0.2f, time);
+    // auto viewMatrix = mat::viewMatrix(myScene.myPlayer.x * 0.1f, myScene.myPlayer.y * 0.1f, myScene.myPlayer.z * 0.1f, myScene.myPlayer.getTheta(), myScene.myPlayer.getPhi(), myScene.myPlayer.getAlpha());
+    auto viewMatrix = myCamera.Matrix(45.0f, 0.1f, 100.0f);
+    auto viewLoc = glGetUniformLocation(gGraphicsPipelineShaderProgram, "view");
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 
-    auto transLoc = glGetUniformLocation(gGraphicsPipelineShaderProgram, "transform");
-    glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(transformMatrix));
+    auto projectionMatrix = mat::projectionMatrix(45.0f, gAspectRatio, 0.1f, 1.0f);
+    auto projectionLoc = glGetUniformLocation(gGraphicsPipelineShaderProgram, "projection");
+    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+    auto modelMatrix = mat::modelMatrix(myScene.myPlayer.x, myScene.myPlayer.y, myScene.myPlayer.z, myScene.myPlayer.getTheta(), myScene.myPlayer.getPhi(), myScene.myPlayer.getAlpha()); 
+    auto modelLoc = glGetUniformLocation(gGraphicsPipelineShaderProgram, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
@@ -96,23 +105,19 @@ void app::Input()
                 break;
 
             case SDLK_z:
-                std::cout << "W pressed" << std::endl;
-                myScene.myPlayer.Keys[0] = 0;
+                myCamera.Keys[0] = 0;
                 continue;
 
             case SDLK_s:
-                std::cout << "S pressed" << std::endl;
-                myScene.myPlayer.Keys[1] = 0;
+                myCamera.Keys[1] = 0;
                 continue;
 
             case SDLK_q:
-                std::cout << "A pressed" << std::endl;
-                myScene.myPlayer.Keys[2] = 0;
+                myCamera.Keys[2] = 0;
                 continue;
 
             case SDLK_d:
-                std::cout << "D pressed" << std::endl;
-                myScene.myPlayer.Keys[3] = 0;
+                myCamera.Keys[3] = 0;
                 continue;
             default:
                 break;
@@ -122,28 +127,33 @@ void app::Input()
             switch (event.key.keysym.sym)
             {
             case SDLK_z:
-                std::cout << "W pressed" << std::endl;
-                myScene.myPlayer.Keys[0] = 1;
+                myCamera.Keys[0] = 1;
                 continue;
 
             case SDLK_s:
-                std::cout << "S pressed" << std::endl;
-                myScene.myPlayer.Keys[1] = 1;
+                myCamera.Keys[1] = 1;
                 continue;
 
             case SDLK_q:
-                std::cout << "A pressed" << std::endl;
-                myScene.myPlayer.Keys[2] = 1;
+                myCamera.Keys[2] = 1;
                 continue;
 
             case SDLK_d:
-                std::cout << "D pressed" << std::endl;
-                myScene.myPlayer.Keys[3] = 1;
+                myCamera.Keys[3] = 1;
                 continue;
 
             default:
                 break;
             }
+
+        case SDL_MOUSEMOTION:
+        {
+            glm::vec3 newOrientation = glm::rotate(myCamera.Orientation, -(float)event.motion.yrel * 0.01f, glm::normalize(glm::cross(myCamera.Orientation, myCamera.Up)));
+            newOrientation = glm::rotate(newOrientation, -(float)event.motion.xrel * 0.01f, myCamera.Up);
+            myCamera.Orientation = newOrientation;
+        } 
+            continue;
+        
         default:
             break;
         }
@@ -152,7 +162,6 @@ void app::Input()
 
 void app::MainLoop()
 {
-    std::cout << "Main loop started" << std::endl;
     fflush(stdout);
     while(!gQuit){
 
@@ -166,6 +175,7 @@ void app::MainLoop()
         SDL_GL_SwapWindow(gGraphicsApplicationWindow);
 
         myScene.Update();
+        myCamera.Input();
     }
 }
 
@@ -182,11 +192,9 @@ GLuint app::CompileShader(GLuint type, const GLchar* source){
     GLuint shaderObject;
     if(type == GL_VERTEX_SHADER){
         shaderObject = glCreateShader(GL_VERTEX_SHADER);
-        std::cout << "Compiling vertex shader" << std::endl;
     }
     else if(type == GL_FRAGMENT_SHADER){
         shaderObject = glCreateShader(GL_FRAGMENT_SHADER);
-        std::cout << "Compiling fragment shader" << std::endl;
     }
     glShaderSource(shaderObject, 1, &source, nullptr);
     glCompileShader(shaderObject);
@@ -233,7 +241,6 @@ void app::CreateGraphicsPipeline(){
 
 
 void app::VertexSpecification(){
-    std::cout << "Vertex Specification" << std::endl;
     fflush(stdout);
     
     glGenVertexArrays(1, &gVertexArrayObject);

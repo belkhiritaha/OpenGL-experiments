@@ -5,10 +5,14 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtx/vector_angle.hpp>
 #include "image.hpp"
 #include "player.hpp"
 #include "scene.hpp"
 #include "mat.hpp"
+#include "camera.hpp"
 
 
 class app{
@@ -42,7 +46,10 @@ class app{
         GLuint gGraphicsPipelineShaderProgram = 0;
         //image myImage;
 
+        GLfloat gAspectRatio = 0.0f;
+
         Scene myScene;
+        Camera myCamera;
         int input = 0;
 
 };

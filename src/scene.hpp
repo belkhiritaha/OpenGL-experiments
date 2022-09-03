@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <glad/glad.h>
 #include "mat.hpp"
+#include "blocks.hpp"
 
 class Scene
 {
