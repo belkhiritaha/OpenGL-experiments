@@ -1,0 +1,8 @@
+#ignore ./include/
+include/
+
+#ignore ./src/glad.c
+src/glad.c
+
+#ignore .vscode/
+.vscode/
