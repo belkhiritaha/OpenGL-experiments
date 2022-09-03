@@ -1,6 +1,8 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
+#include <glad/glad.h>
 
 #define PI 3.14159265359
 #define RED mat::Color(1.0f, 0.0f, 0.0f, 1.0f)
@@ -8,18 +10,13 @@
 
 namespace mat {
 
-    struct Color {
-        float r;
-        float g;
-        float b;
-        float a;
-    };
+    std::vector<std::vector<GLfloat>> randomColors(int n);
 
-    struct Point {
-        float x;
-        float y;
-        float z;
-    };
+    std::vector<GLfloat> Color(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+
+    std::vector<GLfloat> Point(GLfloat x, GLfloat y, GLfloat z, std::vector<GLfloat> color);
+
+    std::vector<std::vector<GLfloat>> Cube(GLfloat x, GLfloat y, GLfloat z, GLfloat size, std::vector<std::vector<GLfloat>> colors);
 
 
     glm::mat4 translationMatrix(float x, float y, float z);

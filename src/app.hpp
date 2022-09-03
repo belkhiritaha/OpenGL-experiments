@@ -29,8 +29,8 @@ class app{
         void VertexSpecification();
 
     private:
-        int gScreenWidth = 1080;
-        int gScreenHeight = 720;
+        int gScreenWidth = 1200;
+        int gScreenHeight = 800;
         SDL_Window* gGraphicsApplicationWindow = nullptr;
         SDL_GLContext gOpenGlContext = nullptr;
 
@@ -38,6 +38,7 @@ class app{
 
         GLuint gVertexArrayObject = 0;
         GLuint gVertexBufferObject = 0;
+        GLuint gIndexBufferObject = 0;
         GLuint gGraphicsPipelineShaderProgram = 0;
         //image myImage;
 

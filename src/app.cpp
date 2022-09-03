@@ -7,6 +7,7 @@ app::app(){
 
 void app::InitializeProgram()
 {
+    srand(time(NULL));
     std::cout << "Initializing program" << std::endl;
     fflush(stdout);
     if(SDL_Init(SDL_INIT_VIDEO) < 0){
@@ -51,7 +52,7 @@ void app::PreDraw(){
 
     // auto transformMatrix = mat::translationMatrix(myScene.myPlayer.x * 0.1f, myScene.myPlayer.y * 0.1f, myScene.myPlayer.z * 0.1f);
 
-    auto transformMatrix = mat::rotationMatrix(time * 0.1f, - time * 1.0f, - time * 1.0f);
+    auto transformMatrix = mat::viewMatrix(myScene.myPlayer.x * 0.1f, myScene.myPlayer.y * 0.1f, myScene.myPlayer.z * 0.1f, 0.2f, 0.2f, time);
 
     auto transLoc = glGetUniformLocation(gGraphicsPipelineShaderProgram, "transform");
     glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(transformMatrix));
@@ -71,7 +72,9 @@ void app::PreDraw(){
 void app::Draw(){
     glBindVertexArray(gVertexArrayObject);
     glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
-    glDrawArrays(GL_TRIANGLES, 0, 18);
+    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    //glDrawElements(GL_TRIANGLES, myScene.indexBufferData.size()/3 , GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_TRIANGLES, 0, myScene.vertexData.size()/3);
 }
 
 void app::Input()
@@ -225,60 +228,13 @@ GLuint app::CreateShaderProgram(const char* vertexshadersource, const char* frag
 void app::CreateGraphicsPipeline(){
     GLchar* vs = LoadShaderSource("shaders/vertexshader.glsl");
     GLchar* fs = LoadShaderSource("shaders/fragmentshader.glsl");
-    printf("%s\n", vs);
     gGraphicsPipelineShaderProgram = CreateShaderProgram(vs, fs);
 }
-
-//  1 |  -1 0 1
-//  0 |  -1 0 1
-// -1 |  -1 0 1
 
 
 void app::VertexSpecification(){
     std::cout << "Vertex Specification" << std::endl;
     fflush(stdout);
-    const std::vector<GLfloat> vertexData{  -0.5f, -0.5f, 0.0f, // vertex 1
-                                            1.0f, 0.0f, 0.0f, // color 1
-                                            0.5f, -0.5f, 0.0f, // vertex 2
-                                            0.0f, 1.0f, 0.0f, // color 3
-                                            -0.5f, 0.5f, 0.0f, // vertex 3
-                                            0.0f, 0.0f, 1.0f, // color 4
-                                              
-                                            0.5f, -0.5f, 0.0f, // vertex 4
-                                            0.0f, 1.0f, 0.0f, // color 5
-                                            0.5f, 0.5f, 0.0f, // vertex 5
-                                            1.0f, 0.0f, 0.0f, // color 6
-                                            -0.5f, 0.5f, 0.0f, // vertex 6
-                                            0.0f, 0.0f, 1.0f, // color 7
-
-                                            -0.5f, -0.5f, 0.5f, // vertex 7
-                                            1.0f, 0.0f, 0.0f, // color 8
-                                            0.5f, -0.5f, 0.5f, // vertex 8
-                                            0.0f, 1.0f, 0.0f, // color 9
-                                            -0.5f, 0.5f, 0.5f, // vertex 9
-                                            0.0f, 0.0f, 1.0f, // color 10
-
-                                            0.5f, -0.5f, 0.5f, // vertex 10
-                                            0.0f, 1.0f, 0.0f, // color 11
-                                            0.5f, 0.5f, 0.5f, // vertex 12
-                                            1.0f, 0.0f, 0.0f, // color 13
-                                            -0.5f, 0.5f, 0.5f, // vertex 14
-                                            0.0f, 0.0f, 1.0f, // color 15
-
-                                            -0.5f, -0.5f, 0.0f, // vertex 16
-                                            1.0f, 0.0f, 0.0f, // color 17
-                                            0.5f, -0.5f, 0.0f, // vertex 18
-                                            0.0f, 1.0f, 0.0f, // color 19
-                                            -0.5f, -0.5f, 0.5f, // vertex 20
-                                            0.0f, 0.0f, 1.0f, // color 21
-
-                                            0.5f, -0.5f, 0.0f, // vertex 22
-                                            0.0f, 1.0f, 0.0f, // color 23
-                                            0.5f, -0.5f, 0.5f, // vertex 24
-                                            1.0f, 0.0f, 0.0f, // color 25
-                                            -0.5f, -0.5f, 0.5f, // vertex 26
-                                            };
-
     
     glGenVertexArrays(1, &gVertexArrayObject);
     glBindVertexArray(gVertexArrayObject);
@@ -286,7 +242,12 @@ void app::VertexSpecification(){
     // Vertex Data
     glGenBuffers(1, &gVertexBufferObject);
     glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
-    glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(GLfloat), vertexData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, myScene.vertexData.size() * sizeof(GLfloat), myScene.vertexData.data(), GL_STATIC_DRAW);
+
+    // Index Buffer
+    glGenBuffers(1, &gIndexBufferObject);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIndexBufferObject);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(myScene.indexBufferData)*sizeof(GLuint), myScene.indexBufferData.data(), GL_STATIC_DRAW);
 
 
     glEnableVertexAttribArray(0);
@@ -306,7 +267,6 @@ void app::VertexSpecification(){
 void app::Run()
 {
     InitializeProgram();
-    // myImage.Run();
     CreateGraphicsPipeline();
     VertexSpecification();
     MainLoop();
