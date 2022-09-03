@@ -18,7 +18,7 @@ std::vector<GLfloat> blocks::Point(GLfloat x, GLfloat y, GLfloat z, std::vector<
 };
 
 
-std::vector<std::vector<GLfloat>> blocks::Cube(GLfloat x, GLfloat y, GLfloat z, GLfloat size, std::vector<std::vector<GLfloat>> colors) {
+std::vector<std::vector<GLfloat>> blocks::Cube(GLfloat x, GLfloat y, GLfloat z, std::vector<std::vector<GLfloat>> colors) {
     std::vector<std::vector<GLfloat>> points;
     auto p0 = blocks::Point(x - size, y - size, z - size, colors[0]);
     auto p1 = blocks::Point(x + size, y - size, z - size, colors[1]);
@@ -61,3 +61,27 @@ std::vector<std::vector<GLfloat>> blocks::Cube(GLfloat x, GLfloat y, GLfloat z, 
 
     return points;
 };
+
+
+blocks::pointsList blocks::Plane(GLint sizeHorz, GLint sizeVert ,GLfloat x, GLfloat y, GLfloat z, std::vector<std::vector<GLfloat>> colors){
+    GLfloat currentPosX = x;
+    GLfloat currentPosY = y;
+    GLfloat currentPosZ = z;
+
+    std::vector<std::vector<GLfloat>> points;
+    for (int i = 0; i < sizeHorz; i++) {
+        for (int j = 0; j < sizeVert; j++) {
+            for (int k = 0; k < sizeVert; k++) {
+                auto cube = blocks::Cube(currentPosX, currentPosY, currentPosZ, colors);
+                points.insert(points.end(), cube.begin(), cube.end());
+                currentPosX += size * 2;
+            }
+            currentPosZ += size * 2;
+            currentPosX = x;
+        }
+        currentPosY += size * 2;
+        currentPosZ = z;
+        currentPosX = x;
+    }
+    return points;
+}

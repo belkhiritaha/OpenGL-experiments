@@ -12,8 +12,7 @@ class Camera{
         glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
 
-        int width = 2;
-        int height = 2;
+        float aspectRatio = 16/9;
 
         float speed = 0.1f;
         float sensitivity = 0.1f;

@@ -11,7 +11,7 @@ glm::mat4 Camera::Matrix(float FOVDegrees, float nearPlane, float farPlane)
     glm::mat4 projection = glm::mat4(1.0f);
 
     view = glm::lookAt(Position, Position + Orientation, Up);
-    projection = glm::perspective(glm::radians(FOVDegrees), (float)width / (float)height, nearPlane, farPlane);
+    projection = glm::perspective(glm::radians(FOVDegrees), aspectRatio, nearPlane, farPlane);
 
     glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 mvp = projection * view * model;

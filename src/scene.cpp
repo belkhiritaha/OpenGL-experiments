@@ -6,15 +6,17 @@ Scene::Scene()
     auto colors = {black, black, black, black, black, black, black, black};
     // std::vector<std::vector<GLfloat>> colors = mat::randomColors(8);
 
-    GLfloat blockSize = 0.5f;
+    GLfloat blockSize = blocks::size;
 
-    addCube(0.0f, 0.0f, 0.0f, 0.125f, colors);
+    // addCube(0.0f, 0.0f, 0.0f, 0.125f, colors);
 
-    // colors = mat::randomColors(8);
-    addCube(0.0f, 0.0f, 0.25f, 0.125f, colors);
+    // // colors = mat::randomColors(8);
+    // addCube(0.0f, 0.0f, 0.25f, 0.125f, colors);
 
-    addCube(0.25f, 0.25f, 0.0f, 0.125f, colors);
-    addCube(0.25f, 0.25f, 0.25f, 0.125f, colors);
+    // addCube(0.25f, 0.25f, 0.0f, 0.125f, colors);
+    // addCube(0.25f, 0.25f, 0.25f, 0.125f, colors);
+
+    addPlane(2, 10, 0.0f, 0.0f, 0.0f, colors);
 
     std::cout << "Scene created" << std::endl;
 }
@@ -29,37 +31,10 @@ void Scene::Update()
     myPlayer.Update();
 }
 
+
 void Scene::addCube(GLfloat x, GLfloat y, GLfloat z, GLfloat size, std::vector<std::vector<GLfloat>> colors)
 {
-
-    // Add indices
-    // set index as max of indexBufferData + 1 or 0 if indexBufferData is empty
-    GLuint index = indexBufferData.empty() ? 0 : *std::max_element(indexBufferData.begin(), indexBufferData.end()) + 1;
-    std::vector<GLuint> indices = {
-        index, index + 1, index + 2,
-        index + 2, index + 3, index,
-
-        index + 3, index + 7, index + 2,
-        index + 7, index + 6, index + 2,
-
-        index + 4, index + 5, index + 1,
-        index + 4, index + 1, index + 0,
-
-        index + 7, index + 3 , index + 0,
-        index + 7, index + 0, index + 4,
-
-        index + 5, index + 6, index + 2,
-        index + 5, index + 2, index + 1,
-
-        index + 7, index + 6, index + 5,
-        index + 7, index + 5, index + 4
-    };
-    for (int i = 0; i < indices.size(); i++)
-    {
-        indexBufferData.push_back(indices[i]);
-    }
-    // Add vertices
-    std::vector<std::vector<GLfloat>> cube = blocks::Cube(x, y, z, size, colors);
+    std::vector<std::vector<GLfloat>> cube = blocks::Cube(x, y, z, colors);
     for (int i = 0; i < cube.size(); i++)
     {
         for (int j = 0; j < cube[i].size() - 1; j++)
@@ -68,4 +43,18 @@ void Scene::addCube(GLfloat x, GLfloat y, GLfloat z, GLfloat size, std::vector<s
         }
     }
     std::cout << "Cube created" << std::endl;
+}
+
+
+void Scene::addPlane(GLint sizeHorz, GLint sizeVert, GLfloat x, GLfloat y, GLfloat z, std::vector<std::vector<GLfloat>> colors)
+{
+    auto plane = blocks::Plane(sizeHorz, sizeVert, x, y, z, colors);
+    for (int i = 0; i < plane.size(); i++)
+    {
+        for (int j = 0; j < plane[i].size() - 1; j++)
+        {
+            vertexData.push_back(plane[i][j]);
+        }
+    }
+    std::cout << "Plane created" << std::endl;
 }

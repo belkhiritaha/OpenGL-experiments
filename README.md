@@ -1,0 +1,1 @@
+in order to run this you'll need an include/ directory containing the glad / KHR headers and the src/glad.c file

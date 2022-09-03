@@ -8,13 +8,21 @@
 
 
 namespace blocks {
+    // typedef std::vector<std::vector<GLfloat>> to pointsList
+    typedef std::vector<GLfloat> point;
+    typedef std::vector<point> pointsList;
+    typedef std::vector<GLfloat> color;
+    typedef std::vector<color> colorsList;
 
-    std::vector<std::vector<GLfloat>> randomColors(int n);
+    const GLfloat size = 0.25f;
 
-    std::vector<GLfloat> Color(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
+    colorsList randomColors(int n);
 
-    std::vector<GLfloat> Point(GLfloat x, GLfloat y, GLfloat z, std::vector<GLfloat> color);
+    color Color(GLfloat r, GLfloat g, GLfloat b, GLfloat a);
 
-    std::vector<std::vector<GLfloat>> Cube(GLfloat x, GLfloat y, GLfloat z, GLfloat size, std::vector<std::vector<GLfloat>> colors);
+    point Point(GLfloat x, GLfloat y, GLfloat z, std::vector<GLfloat> color);
 
+    pointsList Cube(GLfloat x, GLfloat y, GLfloat z, std::vector<std::vector<GLfloat>> colors);
+
+    pointsList Plane(GLint sizeHorz, GLint sizeVert ,GLfloat x, GLfloat y, GLfloat z, std::vector<std::vector<GLfloat>> colors);
 };

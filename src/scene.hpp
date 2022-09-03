@@ -16,6 +16,7 @@ class Scene
         // Obj ?
         std::vector<GLfloat> vertexData = {};
         std::vector<GLuint> indexBufferData = {};
-        void addCube(GLfloat x, GLfloat y, GLfloat z, GLfloat size, std::vector<std::vector<GLfloat>> colors);
+        void addCube(GLfloat x, GLfloat y, GLfloat z, GLfloat size, blocks::colorsList colors);
+        void addPlane(GLint sizeHorz, GLint sizeVert, GLfloat x, GLfloat y, GLfloat z, blocks::colorsList colors);
 
 };
