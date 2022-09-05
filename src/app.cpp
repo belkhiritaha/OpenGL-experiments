@@ -83,7 +83,7 @@ void app::Draw(){
     glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
     glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     //glDrawElements(GL_TRIANGLES, myScene.indexBufferData.size()/3 , GL_UNSIGNED_INT, 0);
-    glDrawArrays(GL_TRIANGLES, 0, myScene.vertexData.size()/3);
+    glDrawArrays(GL_TRIANGLES, 0, myScene.myWorld.vertexData.size()/3);
 }
 
 void app::Input()
@@ -249,7 +249,7 @@ void app::VertexSpecification(){
     // Vertex Data
     glGenBuffers(1, &gVertexBufferObject);
     glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
-    glBufferData(GL_ARRAY_BUFFER, myScene.vertexData.size() * sizeof(GLfloat), myScene.vertexData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, myScene.myWorld.vertexData.size() * sizeof(GLfloat), myScene.myWorld.vertexData.data(), GL_STATIC_DRAW);
 
     // Index Buffer
     glGenBuffers(1, &gIndexBufferObject);

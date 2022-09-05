@@ -4,6 +4,7 @@
 #include <glm/gtx/transform.hpp>
 #include <vector>
 #include <glad/glad.h>
+#include "blocks.hpp"
 
 #define PI 3.14159265359
 #define RED mat::Color(1.0f, 0.0f, 0.0f, 1.0f)

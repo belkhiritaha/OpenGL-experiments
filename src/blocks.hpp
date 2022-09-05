@@ -4,7 +4,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform.hpp>
-
+#include <algorithm>
+#include <iostream>
+#include "mat.hpp"
 
 
 namespace blocks {
@@ -22,7 +24,11 @@ namespace blocks {
 
     point Point(GLfloat x, GLfloat y, GLfloat z, std::vector<GLfloat> color);
 
-    pointsList Cube(GLfloat x, GLfloat y, GLfloat z, std::vector<std::vector<GLfloat>> colors);
+    pointsList Cube(GLfloat x, GLfloat y, GLfloat z, std::vector<std::vector<GLfloat>> colors, std::vector<GLfloat> &vertexData);
 
-    pointsList Plane(GLint sizeHorz, GLint sizeVert ,GLfloat x, GLfloat y, GLfloat z, std::vector<std::vector<GLfloat>> colors);
+    pointsList Plane(GLint sizeHorz, GLint sizeVert ,GLfloat x, GLfloat y, GLfloat z, std::vector<std::vector<GLfloat>> colors, std::vector<GLfloat> &vertexData);
+
+    std::vector<GLfloat> RemoveAdjacentVertices(pointsList points, std::vector<GLfloat> vertexData);
+
+    blocks::point CenterPoint(blocks::pointsList face);
 };

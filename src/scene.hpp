@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 #include "mat.hpp"
 #include "blocks.hpp"
+#include "world.hpp"
 
 class Scene
 {
@@ -13,6 +14,7 @@ class Scene
         ~Scene();
         void Update();
         Player myPlayer;
+        World myWorld;
         // Obj ?
         std::vector<GLfloat> vertexData = {};
         std::vector<GLuint> indexBufferData = {};
