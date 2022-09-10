@@ -16,7 +16,12 @@ Scene::Scene()
     std::vector<GLfloat> center = {0.0f, 0.0f, 0.0f};
     //myWorld.addCube(center, blockSize);
 
-    myWorld.addPlane(center, blockSize, 10, 2);
+    myWorld.addPlane(center, blockSize, 20, 1, myWorld.noise({1.0f, 3.0f, 2.5f}, blockSize));
+
+    std::cout << "vertices:" << myWorld.vertexData.size() << std::endl;
+
+    center = {0.0f, 2 * blockSize, 0.0f};
+    myWorld.addCube(center, blockSize);
 
     // print vertices
     std::cout << "vertices:" << myWorld.vertexData.size() << std::endl;
