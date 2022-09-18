@@ -16,6 +16,35 @@ World::~World()
     }
 }
 
+
+void World::printVertexData()
+{
+    std::cout << "Vertex data: " << std::endl;
+    for (int i = 0; i < vertexData.size(); i++)
+    {
+        std::cout << vertexData[i] << std::endl;
+    }
+}
+
+
+void World::printIndexData()
+{
+    std::cout << "Index data: " << std::endl;
+    for (int i = 0; i < indexData.size(); i++)
+    {
+        std::cout << indexData[i] << std::endl;
+    }
+}
+
+
+void World::addIndex(std::vector<int> index)
+{
+    indexData.push_back(index[0]);
+    indexData.push_back(index[1]);
+    indexData.push_back(index[2]);
+}
+
+
 void World::addVertex(std::vector<GLfloat> vertex)
 {
     vertexData.push_back(vertex[0]);
@@ -23,17 +52,23 @@ void World::addVertex(std::vector<GLfloat> vertex)
     vertexData.push_back(vertex[2]);
 }
 
-void World::addTriangle(std::vector<GLfloat> v1, std::vector<GLfloat> v2, std::vector<GLfloat> v3)
-{
+
+void World::addTriangle(std::vector<GLfloat> v1, std::vector<GLfloat> v2, std::vector<GLfloat> v3){
     addVertex(v1);
     addVertex(v2);
     addVertex(v3);
 }
 
-void World::addQuad(std::vector<GLfloat> t1v1, std::vector<GLfloat> t1v2, std::vector<GLfloat> t1v3, std::vector<GLfloat> t2v1, std::vector<GLfloat> t2v2, std::vector<GLfloat> t2v3)
+
+void World::addQuad(std::vector<GLfloat> point1, std::vector<GLfloat> point2, std::vector<GLfloat> point3, std::vector<GLfloat> point4)
 {
-    addTriangle(t1v1, t1v2, t1v3);
-    addTriangle(t2v1, t2v2, t2v3);
+    int indexSize = vertexData.size()/3;
+    
+    addIndex({indexSize, indexSize +1 , indexSize +2});
+    addIndex({indexSize + 3, indexSize , indexSize +2});
+    
+    addTriangle(point1, point2, point3);
+    addVertex(point4);
 }
 
 void World::removeQuad(std::vector<GLfloat> t1v1, std::vector<GLfloat> t1v2, std::vector<GLfloat> t1v3, std::vector<GLfloat> t2v1, std::vector<GLfloat> t2v2, std::vector<GLfloat> t2v3)
@@ -54,131 +89,23 @@ void World::removeQuad(std::vector<GLfloat> t1v1, std::vector<GLfloat> t1v2, std
 
 void World::addCube(std::vector<GLfloat> center, GLfloat size)
 {
-    std::vector<GLfloat> p1 = {center[0] - size, center[1] - size, center[2] - size};
-    std::vector<GLfloat> p2 = {center[0] + size, center[1] - size, center[2] - size};
-    std::vector<GLfloat> p3 = {center[0] + size, center[1] + size, center[2] - size};
-    std::vector<GLfloat> p4 = {center[0] - size, center[1] + size, center[2] - size};
-    std::vector<GLfloat> p5 = {center[0] - size, center[1] - size, center[2] + size};
-    std::vector<GLfloat> p6 = {center[0] + size, center[1] - size, center[2] + size};
-    std::vector<GLfloat> p7 = {center[0] + size, center[1] + size, center[2] + size};
-    std::vector<GLfloat> p8 = {center[0] - size, center[1] + size, center[2] + size};
+    // get points
+    std::vector<GLfloat> point1 = {center[0] - size/2, center[1] - size/2, center[2] - size/2};
+    std::vector<GLfloat> point2 = {center[0] + size/2, center[1] - size/2, center[2] - size/2};
+    std::vector<GLfloat> point3 = {center[0] + size/2, center[1] + size/2, center[2] - size/2};
+    std::vector<GLfloat> point4 = {center[0] - size/2, center[1] + size/2, center[2] - size/2};
+    std::vector<GLfloat> point5 = {center[0] - size/2, center[1] - size/2, center[2] + size/2};
+    std::vector<GLfloat> point6 = {center[0] + size/2, center[1] - size/2, center[2] + size/2};
+    std::vector<GLfloat> point7 = {center[0] + size/2, center[1] + size/2, center[2] + size/2};
+    std::vector<GLfloat> point8 = {center[0] - size/2, center[1] + size/2, center[2] + size/2};
 
-    // get adjacent cubes
-    std::vector<Cube> adjacentCubes;
-    for (Cube cube : this->cubes)
-    {
-        // get norm of distance
-        GLfloat norm = sqrt(pow(center[0] - cube.center[0], 2) + pow(center[1] - cube.center[1], 2) + pow(center[2] - cube.center[2], 2));
-        // std::cout << "norm: " << norm <<  "size"  << size << std::endl;
-        if (norm <= static_cast<GLfloat>(size * 2))
-        {
-            adjacentCubes.push_back(cube);
-        }
-    }
-
-    // std::cout << "Adjacent cubes: " << adjacentCubes.size() << std::endl;
-
-    std::vector<bool> drawFaces = {true, true, true, true, true, true};
-
-    // loop through adjacent cubes
-    for (Cube cube : adjacentCubes)
-    {
-        // get cube points
-        std::vector<GLfloat> cubeP1 = {cube.center[0] - cube.size, cube.center[1] - cube.size, cube.center[2] - cube.size};
-        std::vector<GLfloat> cubeP2 = {cube.center[0] + cube.size, cube.center[1] - cube.size, cube.center[2] - cube.size};
-        std::vector<GLfloat> cubeP3 = {cube.center[0] + cube.size, cube.center[1] + cube.size, cube.center[2] - cube.size};
-        std::vector<GLfloat> cubeP4 = {cube.center[0] - cube.size, cube.center[1] + cube.size, cube.center[2] - cube.size};
-        std::vector<GLfloat> cubeP5 = {cube.center[0] - cube.size, cube.center[1] - cube.size, cube.center[2] + cube.size};
-        std::vector<GLfloat> cubeP6 = {cube.center[0] + cube.size, cube.center[1] - cube.size, cube.center[2] + cube.size};
-        std::vector<GLfloat> cubeP7 = {cube.center[0] + cube.size, cube.center[1] + cube.size, cube.center[2] + cube.size};
-        std::vector<GLfloat> cubeP8 = {cube.center[0] - cube.size, cube.center[1] + cube.size, cube.center[2] + cube.size};
-        
-        // check if cube is on the right
-        if (cube.center[0] < center[0])
-        {
-            drawFaces[0] = false;
-            // remove left face
-            removeQuad(cubeP1, cubeP8, cubeP5, cubeP1, cubeP8, cubeP4);
-        }
-        // check if cube is on the left
-        if (cube.center[0] > center[0])
-        {
-            drawFaces[1] = false;
-            // remove right face
-            removeQuad(cubeP2, cubeP7, cubeP3, cubeP2, cubeP7, cubeP6);
-        }
-
-        // check if cube is on the top
-        if (cube.center[1] < center[1])
-        {
-            drawFaces[2] = false;
-            // remove bottom face
-            removeQuad(cubeP4, cubeP7, cubeP8, cubeP4, cubeP7, cubeP3);
-        }
-        // check if cube is on the bottom
-        if (cube.center[1] > center[1])
-        {
-            drawFaces[3] = false;
-            // remove top face
-            removeQuad(cubeP1, cubeP6, cubeP2, cubeP1, cubeP6, cubeP5);
-        }
-
-        // this block is good
-        // check if cube is in front
-        if (cube.center[2] > center[2])
-        {
-            drawFaces[4] = false;
-            // remove back face
-            removeQuad(cubeP4, cubeP2, cubeP3, cubeP4, cubeP1, cubeP2);
-        }
-        // check if cube is behind
-        if (cube.center[2] < center[2])
-        {
-            drawFaces[5] = false;
-            // remove front face
-            removeQuad(cubeP5, cubeP8, cubeP6, cubeP8, cubeP7, cubeP6);
-        }
-        
-    }
-    // draw front face
-    if (drawFaces[0])
-    {
-        addQuad(p5, p8, p6, p8, p7, p6);
-    }
-    // draw back face
-    if (drawFaces[1])
-    {
-        addQuad(p4, p2, p3, p4, p1, p2);
-    }
-    // draw top face
-    if (drawFaces[2])
-    {
-        addQuad(p1, p6, p2, p1, p6, p5);
-    }
-    // draw bottom face
-    if (drawFaces[3])
-    {
-        addQuad(p4, p7, p8, p4, p7, p3);
-    }
-    // draw right face
-    if (drawFaces[4])
-    {
-        addQuad(p2, p7, p3, p2, p7, p6);
-    }
-    // draw left face
-    if (drawFaces[5])
-    {
-        addQuad(p1, p8, p5, p1, p8, p4);
-    }
-
-    // addQuad(p5, p8, p6, p8, p7, p6);
-    // addQuad(p4, p2, p3, p4, p1, p2);
-    // addQuad(p1, p6, p2, p1, p6, p5);
-    // addQuad(p4, p7, p8, p4, p7, p3);
-    // addQuad(p2, p7, p3, p2, p7, p6);
-    // addQuad(p1, p8, p5, p1, p8, p4);
-
-    cubes.push_back(Cube(center, size));
+    // add quads
+    addQuad(point1, point2, point3, point4);
+    addQuad(point2, point6, point7, point3);
+    addQuad(point6, point5, point8, point7);
+    addQuad(point5, point1, point4, point8);
+    addQuad(point4, point3, point7, point8);
+    addQuad(point5, point6, point2, point1);
 }
 
 void World::addPlane(std::vector<GLfloat> center, GLfloat size, int width, int height, GLfloat noise)

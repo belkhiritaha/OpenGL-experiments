@@ -81,9 +81,9 @@ void app::PreDraw(){
 void app::Draw(){
     glBindVertexArray(gVertexArrayObject);
     glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
-    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-    //glDrawElements(GL_TRIANGLES, myScene.indexBufferData.size()/3 , GL_UNSIGNED_INT, 0);
-    glDrawArrays(GL_TRIANGLES, 0, myScene.myWorld.vertexData.size()/3);
+    // glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    glDrawElements(GL_TRIANGLES, myScene.myWorld.indexData.size() , GL_UNSIGNED_INT, 0);
+    //glDrawArrays(GL_TRIANGLES, 0, myScene.myWorld.vertexData.size()/3);
 }
 
 void app::Input()
@@ -247,27 +247,29 @@ void app::VertexSpecification(){
     glBindVertexArray(gVertexArrayObject);
 
     // Vertex Data
+    const std::vector<GLfloat> vertexData = {
+        // Positions          // Colors           // Texture Coords
+         -0.5f,  0.0f, 0.0f,
+         -0.5f, 0.5f, 0.0f,
+        0.5f, 0.5f, 0.0f,
+        0.5f,  -0.5f, 0.0f 
+    };
     glGenBuffers(1, &gVertexBufferObject);
     glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
     glBufferData(GL_ARRAY_BUFFER, myScene.myWorld.vertexData.size() * sizeof(GLfloat), myScene.myWorld.vertexData.data(), GL_STATIC_DRAW);
 
     // Index Buffer
+    const std::vector<GLuint> indexData = {1,2,3, 3, 4, 1};
     glGenBuffers(1, &gIndexBufferObject);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIndexBufferObject);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(myScene.indexBufferData)*sizeof(GLuint), myScene.indexBufferData.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, myScene.myWorld.indexData.size() * sizeof(GLuint), myScene.myWorld.indexData.data(), GL_STATIC_DRAW);
 
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*6, nullptr);
-
-    // linking in VAO
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*6, (void*)(sizeof(GL_FLOAT)*3));
-
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, nullptr);
 
     glBindVertexArray(0);
     glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
 }
 
 

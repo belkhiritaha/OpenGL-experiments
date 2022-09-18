@@ -2,31 +2,10 @@
 
 Scene::Scene()
 {
-    blocks::color black = blocks::Color(0.0f, 0.0f, 0.0f, 1.0f);
-    auto colors = {black, black, black, black, black, black, black, black};
-    //std::vector<std::vector<GLfloat>> colors = blocks::randomColors(8);
-
     GLfloat blockSize = blocks::size;
-
-    //auto newVertices = blocks::createVertices(blockSize);
-
-    // addPlane(2, 100, 0.0f, 0.0f, 0.0f, colors, );
-    // auto plane = blocks::Plane(2, 100, 0.0f, 0.0f, 0.0f, colors, Scene::vertexData);
-
     std::vector<GLfloat> center = {0.0f, 0.0f, 0.0f};
-    //myWorld.addCube(center, blockSize);
-
-    myWorld.addPlane(center, blockSize, 20, 1, myWorld.noise({1.0f, 3.0f, 2.5f}, blockSize));
-
-    std::cout << "vertices:" << myWorld.vertexData.size() << std::endl;
-
-    center = {0.0f, 2 * blockSize, 0.0f};
     myWorld.addCube(center, blockSize);
-
-    // print vertices
-    std::cout << "vertices:" << myWorld.vertexData.size() << std::endl;
-
-    std::cout << "Scene created" << std::endl;
+    // myWorld.addQuad(point1, point2, point3, point4);
 }
 
 Scene::~Scene()
