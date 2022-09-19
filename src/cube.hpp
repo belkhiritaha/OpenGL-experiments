@@ -16,4 +16,10 @@ class Cube {
         int id;
         GLfloat size;
         std::vector<GLfloat> center;
+        bool top = false;
+        bool bottom = false;
+        bool left = false;
+        bool right = false;
+        bool front = false;
+        bool back = false;
 };

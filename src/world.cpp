@@ -4,6 +4,7 @@ World::World()
 {
     std::cout << "World created" << std::endl;
     vertexData = {};
+    chunks.push_back(new Chunk());
 }
 
 World::~World()
@@ -45,18 +46,21 @@ void World::addIndex(std::vector<int> index)
 }
 
 
-void World::addVertex(std::vector<GLfloat> vertex)
+void World::addVertex(std::vector<GLfloat> vertex, GLfloat texture_x, GLfloat texture_y)
 {
     vertexData.push_back(vertex[0]);
     vertexData.push_back(vertex[1]);
     vertexData.push_back(vertex[2]);
+
+    // vertexData.push_back(texture_x);
+    // vertexData.push_back(texture_y);
 }
 
 
 void World::addTriangle(std::vector<GLfloat> v1, std::vector<GLfloat> v2, std::vector<GLfloat> v3){
-    addVertex(v1);
-    addVertex(v2);
-    addVertex(v3);
+    addVertex(v1, 0.0f, 1.0f);
+    addVertex(v2, 0.0f, 0.0f);
+    addVertex(v3, 1.0f, 0.0f);
 }
 
 
@@ -68,7 +72,7 @@ void World::addQuad(std::vector<GLfloat> point1, std::vector<GLfloat> point2, st
     addIndex({indexSize + 3, indexSize , indexSize +2});
     
     addTriangle(point1, point2, point3);
-    addVertex(point4);
+    addVertex(point4, 1.0f, 1.0f);
 }
 
 void World::removeQuad(std::vector<GLfloat> t1v1, std::vector<GLfloat> t1v2, std::vector<GLfloat> t1v3, std::vector<GLfloat> t2v1, std::vector<GLfloat> t2v2, std::vector<GLfloat> t2v3)
@@ -89,6 +93,8 @@ void World::removeQuad(std::vector<GLfloat> t1v1, std::vector<GLfloat> t1v2, std
 
 void World::addCube(std::vector<GLfloat> center, GLfloat size)
 {
+    // instanciate cube
+    Cube cube = Cube(center, size);
     // get points
     std::vector<GLfloat> point1 = {center[0] - size/2, center[1] - size/2, center[2] - size/2};
     std::vector<GLfloat> point2 = {center[0] + size/2, center[1] - size/2, center[2] - size/2};
@@ -106,6 +112,8 @@ void World::addCube(std::vector<GLfloat> center, GLfloat size)
     addQuad(point5, point1, point4, point8);
     addQuad(point4, point3, point7, point8);
     addQuad(point5, point6, point2, point1);
+
+    this->chunks[0]->addCube(cube);
 }
 
 void World::addPlane(std::vector<GLfloat> center, GLfloat size, int width, int height, GLfloat noise)
@@ -123,12 +131,12 @@ void World::addPlane(std::vector<GLfloat> center, GLfloat size, int width, int h
             {
                 addCube({currentPosX, currentPosY, currentPosZ}, size);
                 // std::cout << "perlin noise: " << noise << std::endl;
-                currentPosX += size * 2;
+                currentPosX += size;
             }
-            currentPosZ += size * 2;
+            currentPosZ += size;
             currentPosX = center[0];
         }
-        currentPosY += size * 2;
+        currentPosY += size;
         currentPosZ = center[2];
         currentPosX = center[0];
     }

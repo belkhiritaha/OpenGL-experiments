@@ -9,6 +9,7 @@
 #include <glad/glad.h>
 
 #include "cube.hpp"
+#include "chunk.hpp"
 
 class World {
     public:
@@ -17,7 +18,7 @@ class World {
         std::vector<GLfloat> vertexData;
         std::vector<GLuint> indexData;
 
-        void addVertex(std::vector<GLfloat> vertex);
+        void addVertex(std::vector<GLfloat> vertex, GLfloat texture_x, GLfloat texture_y);
         void addTriangle(std::vector<GLfloat> v1, std::vector<GLfloat> v2, std::vector<GLfloat> v3);
         void addQuad(std::vector<GLfloat> point1, std::vector<GLfloat> point2, std::vector<GLfloat> point3, std::vector<GLfloat> point4);
         void addCube(std::vector<GLfloat> center, GLfloat size);
@@ -32,4 +33,6 @@ class World {
         void printIndexData();
         void printVertexData();
         std::vector<Cube> cubes;
+
+        std::vector<Chunk *> chunks;
 };

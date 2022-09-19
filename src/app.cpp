@@ -1,7 +1,22 @@
 #include "app.hpp"
 
+unsigned int tex;
+
 app::app(){
     Run();
+}
+
+
+unsigned int loadTexture(const char * filename){
+    SDL_Surface* image = SDL_LoadBMP(filename);
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->w, image->h, 0, GL_BGR, GL_UNSIGNED_BYTE, image->pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    SDL_FreeSurface(image);
+    return textureID;
 }
 
 
@@ -41,6 +56,9 @@ void app::InitializeProgram()
     if(!gladLoadGLLoader(SDL_GL_GetProcAddress)){
         exit(1);
     }
+
+    glEnable(GL_TEXTURE_2D);
+    tex = loadTexture("texture.bmp");
 }
 
 
@@ -81,7 +99,8 @@ void app::PreDraw(){
 void app::Draw(){
     glBindVertexArray(gVertexArrayObject);
     glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
-    // glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glDrawElements(GL_TRIANGLES, myScene.myWorld.indexData.size() , GL_UNSIGNED_INT, 0);
     //glDrawArrays(GL_TRIANGLES, 0, myScene.myWorld.vertexData.size()/3);
 }
@@ -247,19 +266,11 @@ void app::VertexSpecification(){
     glBindVertexArray(gVertexArrayObject);
 
     // Vertex Data
-    const std::vector<GLfloat> vertexData = {
-        // Positions          // Colors           // Texture Coords
-         -0.5f,  0.0f, 0.0f,
-         -0.5f, 0.5f, 0.0f,
-        0.5f, 0.5f, 0.0f,
-        0.5f,  -0.5f, 0.0f 
-    };
     glGenBuffers(1, &gVertexBufferObject);
     glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
     glBufferData(GL_ARRAY_BUFFER, myScene.myWorld.vertexData.size() * sizeof(GLfloat), myScene.myWorld.vertexData.data(), GL_STATIC_DRAW);
 
     // Index Buffer
-    const std::vector<GLuint> indexData = {1,2,3, 3, 4, 1};
     glGenBuffers(1, &gIndexBufferObject);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIndexBufferObject);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, myScene.myWorld.indexData.size() * sizeof(GLuint), myScene.myWorld.indexData.data(), GL_STATIC_DRAW);
