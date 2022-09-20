@@ -3,9 +3,10 @@
 World::World()
 {
     vertexData = {};
-    initChunks(20);
+    initChunks(40);
     std::cout << "World created" << std::endl;
 }
+
 
 World::~World()
 {
@@ -114,10 +115,10 @@ std::vector<int> World::getBlockChunk(std::vector<GLfloat> center)
 }
 
 
-void World::addCube(std::vector<GLfloat> center, GLfloat size)
+void World::addCube(Cube cube)
 {
-    // instanciate cube
-    Cube cube = Cube(center, size);
+    auto center = cube.center;
+    auto size = blocks::size;
     // get points
     std::vector<GLfloat> point1 = {center[0] - size/2, center[1] - size/2, center[2] - size/2};
     std::vector<GLfloat> point2 = {center[0] + size/2, center[1] - size/2, center[2] - size/2};
@@ -151,6 +152,9 @@ void World::addPlane(std::vector<GLfloat> center, GLfloat size, int width, int h
     GLfloat currentPosY = center[1];
     GLfloat currentPosZ = center[2];
 
+    // generate int using sin
+    GLfloat n = 1253.1f;
+
     std::vector<std::vector<GLfloat>> points;
     for (int i = 0; i < height; i++)
     {
@@ -158,7 +162,10 @@ void World::addPlane(std::vector<GLfloat> center, GLfloat size, int width, int h
         {
             for (int k = 0; k < width; k++)
             {
-                addCube({currentPosX, currentPosY, currentPosZ}, size);
+                n = std::fabs(std::sin(rand() % 1000));
+                std::cout << "NNNNNNNNN: " << currentPosY + n << std::endl;
+                auto cube = Cube({currentPosX, currentPosY + n, currentPosZ}, blocks::size);
+                addCube(cube);
                 // std::cout << "perlin noise: " << noise << std::endl;
                 currentPosX += size;
             }

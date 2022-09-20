@@ -100,7 +100,7 @@ void app::Draw(){
     glBindVertexArray(gVertexArrayObject);
     glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
     glBindTexture(GL_TEXTURE_2D, tex);
-    glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
     glDrawElements(GL_TRIANGLES, myScene.myWorld.indexData.size() , GL_UNSIGNED_INT, 0);
     //glDrawArrays(GL_TRIANGLES, 0, myScene.myWorld.vertexData.size()/3);
 }

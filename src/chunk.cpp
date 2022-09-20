@@ -53,6 +53,9 @@ void Chunk::addCube(Cube cube)
     int y = cube.center[1]/size;
     int z = cube.center[2]/size;
 
+    std::cout << "Trying to add block at " << x - ChunkData::chunkSize * GetPosX() << " " << y << " " << z - ChunkData::chunkSize * GetPosY() << std::endl;
+
+
     blocks[x - ChunkData::chunkSize * GetPosX()][y][z- ChunkData::chunkSize * GetPosY()] = 1;
 
     std::cout << "Added block at " << x - ChunkData::chunkSize * GetPosX() << " " << y << " " << z - ChunkData::chunkSize * GetPosY() << std::endl;
