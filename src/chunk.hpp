@@ -10,8 +10,18 @@ class Chunk {
     public:
         Chunk();
         ~Chunk();
-        int chunkSize = 8;
+        int chunkPosX;
+        int chunkPosY;
         int *** blocks;
 
+        void SetPosX(int x);
+        void SetPosY(int y);
+        int GetPosX();
+        int GetPosY();
         void addCube(Cube cube);
 };
+
+
+namespace ChunkData {
+    extern int chunkSize;
+}

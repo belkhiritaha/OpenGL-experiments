@@ -10,6 +10,8 @@
 
 #include "cube.hpp"
 #include "chunk.hpp"
+#include "chunk.hpp"
+#include "camera.hpp"
 
 class World {
     public:
@@ -34,5 +36,9 @@ class World {
         void printVertexData();
         std::vector<Cube> cubes;
 
-        std::vector<Chunk *> chunks;
+        Chunk *** chunks;
+        void initChunks(int n);
+        std::vector<int> getBlockChunk(std::vector<GLfloat> center);
+
+        Camera myCamera;
 };

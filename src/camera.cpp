@@ -1,4 +1,5 @@
 #include "camera.hpp"
+#include "blocks.hpp"
 
 Camera::Camera()
 {
@@ -33,4 +34,23 @@ void Camera::Input(){
     if(Keys[3] == 1){
         Position += speed * glm::cross(Orientation, Up);
     }
+}
+
+
+std::vector<GLfloat> Camera::getPlayerPosition(){
+    std::vector<GLfloat> playerPos = {0, 0, 0};
+    playerPos[0] = Position[0];
+    playerPos[1] = Position[1];
+    playerPos[2] = Position[2];
+    return playerPos;
+}
+
+
+std::vector<int> Camera::getPlayerChunk()
+{
+    int posX = Position[0]/blocks::size;
+    int posY = Position[2]/blocks::size;
+
+    std::vector<int> chunkPos = {posX, posY};
+    return chunkPos;
 }

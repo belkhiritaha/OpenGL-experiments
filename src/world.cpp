@@ -2,9 +2,9 @@
 
 World::World()
 {
-    std::cout << "World created" << std::endl;
     vertexData = {};
-    chunks.push_back(new Chunk());
+    initChunks(20);
+    std::cout << "World created" << std::endl;
 }
 
 World::~World()
@@ -14,6 +14,19 @@ World::~World()
     for (int i = 0; i < cubes.size(); i++)
     {
         delete &cubes[i];
+    }
+}
+
+
+void World::initChunks(int n){
+    chunks = new Chunk**[n];
+    for (int i = 0; i < n; i++) {
+        chunks[i] = new Chunk*[n];
+        for (int j = 0; j < n; j++) {
+            chunks[i][j] = new Chunk();
+            chunks[i][j]->SetPosX(i);
+            chunks[i][j]->SetPosY(j);
+        }
     }
 }
 
@@ -91,6 +104,16 @@ void World::removeQuad(std::vector<GLfloat> t1v1, std::vector<GLfloat> t1v2, std
 }   
 
 
+std::vector<int> World::getBlockChunk(std::vector<GLfloat> center)
+{
+    int posX = center[0]/blocks::size;
+    int posY = center[2]/blocks::size;
+
+    std::vector<int> chunkPos = {posX, posY};
+    return chunkPos;
+}
+
+
 void World::addCube(std::vector<GLfloat> center, GLfloat size)
 {
     // instanciate cube
@@ -113,7 +136,13 @@ void World::addCube(std::vector<GLfloat> center, GLfloat size)
     addQuad(point4, point3, point7, point8);
     addQuad(point5, point6, point2, point1);
 
-    this->chunks[0]->addCube(cube);
+    std::vector<int> chunkPos = getBlockChunk(center);
+    int whichChunkX = chunkPos[0]/ChunkData::chunkSize;
+    int whichChunkY = chunkPos[1]/ChunkData::chunkSize;
+
+    std::cout << "Chunk: " << whichChunkX << ", " << whichChunkY << std::endl;
+
+    this->chunks[whichChunkX][whichChunkY]->addCube(cube);
 }
 
 void World::addPlane(std::vector<GLfloat> center, GLfloat size, int width, int height, GLfloat noise)

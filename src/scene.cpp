@@ -6,7 +6,7 @@ Scene::Scene()
     std::vector<GLfloat> center = {0.0f, 0.0f, 0.0f};
     // myWorld.addCube(center, blockSize);
     // myWorld.addQuad(point1, point2, point3, point4);
-    myWorld.addPlane(center, blockSize, 6, 2, 0.0f);
+    myWorld.addPlane(center, blockSize, 100, 2, 0.0f);
 }
 
 Scene::~Scene()
@@ -17,4 +17,6 @@ Scene::~Scene()
 void Scene::Update()
 {
     myPlayer.Update();
+    // std::vector<GLfloat> playerPos = myWorld.myCamera.getPlayerPosition();
+    // myWorld.addPlane(playerPos, blocks::size, 2, 2, 0.0f);
 }

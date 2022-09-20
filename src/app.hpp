@@ -49,7 +49,6 @@ class app{
         GLfloat gAspectRatio = 0.0f;
 
         Scene myScene;
-        Camera myCamera;
         int input = 0;
 
 };

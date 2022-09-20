@@ -72,7 +72,7 @@ void app::PreDraw(){
     // auto transformMatrix = mat::translationMatrix(myScene.myPlayer.x * 0.1f, myScene.myPlayer.y * 0.1f, myScene.myPlayer.z * 0.1f);
 
     // auto viewMatrix = mat::viewMatrix(myScene.myPlayer.x * 0.1f, myScene.myPlayer.y * 0.1f, myScene.myPlayer.z * 0.1f, myScene.myPlayer.getTheta(), myScene.myPlayer.getPhi(), myScene.myPlayer.getAlpha());
-    auto viewMatrix = myCamera.Matrix(45.0f, 0.1f, 100.0f);
+    auto viewMatrix = myScene.myWorld.myCamera.Matrix(45.0f, 0.1f, 100.0f);
     auto viewLoc = glGetUniformLocation(gGraphicsPipelineShaderProgram, "view");
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
 
@@ -124,19 +124,19 @@ void app::Input()
                 break;
 
             case SDLK_z:
-                myCamera.Keys[0] = 0;
+                myScene.myWorld.myCamera.Keys[0] = 0;
                 continue;
 
             case SDLK_s:
-                myCamera.Keys[1] = 0;
+                myScene.myWorld.myCamera.Keys[1] = 0;
                 continue;
 
             case SDLK_q:
-                myCamera.Keys[2] = 0;
+                myScene.myWorld.myCamera.Keys[2] = 0;
                 continue;
 
             case SDLK_d:
-                myCamera.Keys[3] = 0;
+                myScene.myWorld.myCamera.Keys[3] = 0;
                 continue;
             default:
                 break;
@@ -146,19 +146,19 @@ void app::Input()
             switch (event.key.keysym.sym)
             {
             case SDLK_z:
-                myCamera.Keys[0] = 1;
+                myScene.myWorld.myCamera.Keys[0] = 1;
                 continue;
 
             case SDLK_s:
-                myCamera.Keys[1] = 1;
+                myScene.myWorld.myCamera.Keys[1] = 1;
                 continue;
 
             case SDLK_q:
-                myCamera.Keys[2] = 1;
+                myScene.myWorld.myCamera.Keys[2] = 1;
                 continue;
 
             case SDLK_d:
-                myCamera.Keys[3] = 1;
+                myScene.myWorld.myCamera.Keys[3] = 1;
                 continue;
 
             default:
@@ -167,9 +167,9 @@ void app::Input()
 
         case SDL_MOUSEMOTION:
         {
-            glm::vec3 newOrientation = glm::rotate(myCamera.Orientation, -(float)event.motion.yrel * 0.01f, glm::normalize(glm::cross(myCamera.Orientation, myCamera.Up)));
-            newOrientation = glm::rotate(newOrientation, -(float)event.motion.xrel * 0.01f, myCamera.Up);
-            myCamera.Orientation = newOrientation;
+            glm::vec3 newOrientation = glm::rotate(myScene.myWorld.myCamera.Orientation, -(float)event.motion.yrel * 0.01f, glm::normalize(glm::cross(myScene.myWorld.myCamera.Orientation, myScene.myWorld.myCamera.Up)));
+            newOrientation = glm::rotate(newOrientation, -(float)event.motion.xrel * 0.01f, myScene.myWorld.myCamera.Up);
+            myScene.myWorld.myCamera.Orientation = newOrientation;
         } 
             continue;
         
@@ -194,7 +194,7 @@ void app::MainLoop()
         SDL_GL_SwapWindow(gGraphicsApplicationWindow);
 
         myScene.Update();
-        myCamera.Input();
+        myScene.myWorld.myCamera.Input();
     }
 }
 

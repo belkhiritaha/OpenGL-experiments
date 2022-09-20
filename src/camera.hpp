@@ -23,5 +23,7 @@ class Camera{
         Camera();
         glm::mat4 Matrix(float FOVDegrees, float nearPlane, float farPlane);
         void Input();  
-      
+
+        std::vector<GLfloat> getPlayerPosition();
+        std::vector<int> getPlayerChunk();
 };
